@@ -63,6 +63,17 @@ The above should start docker and open an X11 Visual Studio Code window on your 
 * **docker**
 * NOT yet supported on OSX or Windows (need to work out X11 or similar set up for each)
 
+### Use a Custom `.workingcopyrc` For Your Environment
+
+The vscodify-docker set up is meant to be as generic/language agnostic as possible, but you're frequently going to want to make changes to your enviroment. The default entrypoint script for vscodify-docker supports this by looking for a `.workingcopyrc` file in the root of your working copy, and sourcing that script if it exists.
+
+Example: say your project is in python and your repo includes a submodule `MySubmodule` and when you run the vscode docker env, you want that submodule included in the `PYTHONPATH`. You could make this happen by adding the following `.workingcopyrc` to your project root:
+
+```bash
+# .workingcopyrc at the root of your project
+PYTHONPATH=${VSCODIFY_WORKING_COPY}/MySubmodule:${PYTHONPATH}
+```
+
 ## Authors
 
 * **Larry Kirschner** - [beatthat](https://github.com/beathat)

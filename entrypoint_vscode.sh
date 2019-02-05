@@ -21,14 +21,17 @@ if [ "$1" == "vscode" ]; then
 
     echo "Starting vscode $1, code"
     if [ $ID = 0 ];then
-	if [ -f /home/$MYUSERNAME/.bashrc ]; then
-	    echo "there is a .bashrc we source it and launch code"
-	    su $MYUSERNAME -c "source /home/$MYUSERNAME/.bashrc && code --verbose -w ${VSCODE_WORKING_COPY}"
-	else
-	    echo "there is NO .bashrc we just launch code -verbose -w ${VSCODE_WORKING_COPY}"
-	    su $MYUSERNAME -c "code -w ${VSCODE_WORKING_COPY}"
-	fi
-	echo "Code a rendu la main..., we Exit"
+        if [ -f ${VSCODE_WORKING_COPY}/.workingcopyrc ]; then
+            echo "there is a .workingcopyrc we source it and launch code"
+            su $MYUSERNAME -c "source ${VSCODE_WORKING_COPY}/.workingcopyrc && code --verbose -w ${VSCODE_WORKING_COPY}"
+        elif [ -f /home/$MYUSERNAME/.bashrc ]; then
+            echo "there is a .bashrc we source it and launch code"
+            su $MYUSERNAME -c "source /home/$MYUSERNAME/.bashrc && code --verbose -w ${VSCODE_WORKING_COPY}"
+        else
+            echo "there is NO .bashrc we just launch code -verbose -w ${VSCODE_WORKING_COPY}"
+            su $MYUSERNAME -c "code -w ${VSCODE_WORKING_COPY}"
+        fi
+	    echo "Code a rendu la main..., we Exit"
     fi
 else
     echo "Starting your overrided command: exec $@"

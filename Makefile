@@ -49,6 +49,11 @@ VSCODE_WORKING_COPY=${shell pwd}
 # where the host-machine working copy will be mounted.
 VSCODE_WORKING_COPY_MOUNT?=/docker_host
 
+# VSCODE_ADDITIONAL_RUN_ARGS
+# 
+# Use to pass addition arguments to docker 'run'
+VSCODE_ADDITIONAL_RUN_ARGS?=
+
 # Build the vscode-enable docker image
 build:
 	docker build \
@@ -76,21 +81,21 @@ endif
 # Run the vscode-enabled docker image
 run: rm-exited-container
 	docker run \
-	-dti \
-	--runtime=nvidia \
-	--net="host" \
-	--ipc="host" \
-	--name=${VSCODE_CONTAINER_NAME} \
-	-h ${VSCODE_CONTAINER_NAME} \
-	-e DISPLAY=${DISPLAY} \
-	-e MYUID=${shell id -u} \
-	-e MYGID=${shell id -g} \
-	-e MYUSERNAME=${shell id -un} \
-	-e SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
-	-v /dev/shm:/dev/shm \
-	-v ${shell dirname ${SSH_AUTH_SOCK}}:${shell dirname ${SSH_AUTH_SOCK}} \
-	-v /tmp/.X11-unix:/tmp/.X11-unix \
-	-v ${HOME}:${HOME} \
-	-v ${VSCODE_WORKING_COPY}:${VSCODE_WORKING_COPY_MOUNT} \
-	-w ${VSCODE_WORKING_COPY_MOUNT} \
-	${VSCODE_IMAGE} 
+		-dti \
+		--runtime=nvidia \
+		--net="host" \
+		--ipc="host" \
+		--name=${VSCODE_CONTAINER_NAME} \
+		-h ${VSCODE_CONTAINER_NAME} \
+		-e DISPLAY=${DISPLAY} \
+		-e MYUID=${shell id -u} \
+		-e MYGID=${shell id -g} \
+		-e MYUSERNAME=${shell id -un} \
+		-e SSH_AUTH_SOCK=${SSH_AUTH_SOCK} \
+		-v /dev/shm:/dev/shm \
+		-v ${shell dirname ${SSH_AUTH_SOCK}}:${shell dirname ${SSH_AUTH_SOCK}} \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+		-v ${HOME}:${HOME} \
+		-v ${VSCODE_WORKING_COPY}:${VSCODE_WORKING_COPY_MOUNT} \
+		-w ${VSCODE_WORKING_COPY_MOUNT} \
+	${VSCODE_ADDITIONAL_RUN_ARGS} ${VSCODE_IMAGE} 

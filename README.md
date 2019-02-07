@@ -14,7 +14,7 @@ The problem with that is, I then lack a modern development enviroment.
 To address this, I use vscodify-docker to create a 'devel' tag for my 
 docker images, and then code in VS Code running over X11 from the docker container.
 
-## Getting Started
+## Getting started
 
 The simplest integration is to add vscodify-docker to your project as a git submodule
 
@@ -63,7 +63,7 @@ The above should start docker and open an X11 Visual Studio Code window on your 
 * **docker**
 * NOT yet supported on OSX or Windows (need to work out X11 or similar set up for each)
 
-### Use a Custom `.workingcopyrc` For Your Environment
+## Use a custom `.workingcopyrc` to configure the environment for your project
 
 The vscodify-docker set up is meant to be as generic/language agnostic as possible, but you're frequently going to want to make changes to your enviroment. The default entrypoint script for vscodify-docker supports this by looking for a `.workingcopyrc` file in the root of your working copy, and sourcing that script if it exists.
 
@@ -73,6 +73,17 @@ Example: say your project is in python and your repo includes a submodule `MySub
 # .workingcopyrc at the root of your project
 PYTHONPATH=${VSCODIFY_WORKING_COPY}/MySubmodule:${PYTHONPATH}
 ```
+
+### Use `sh -l` with `docker exec` to make sure your `.workingcopyrc` is sourced in the shell
+
+If you've created a `.workingcopyrc` file for your project, you probably want it sourced for any shell you start with `docker exec` on a running instance of your dev container. To make this happen you need to use the `-l` argument with ssh when you run `docker exec`, e.g.
+
+```
+docker exec your_container_name:vscode -it \
+    ssh -l -c 'your actual commands here in quotes'
+```
+
+The under-the-covers reason is that the `workingcopyrc` file was copied to `/etc/profile.d` at docker-run time, but by the rules of unix, scripts in that location only execute for 'login' shells. If down the road we find a way to get those environement variables sourced without `ssh -l`, we'll remove this extra requirement.
 
 ## Authors
 
